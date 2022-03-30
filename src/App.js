@@ -9,6 +9,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       isToggleOn: false,
+      isToggleOnEdit: false,
       task: {
         id: 0,
         name: '',
@@ -17,6 +18,7 @@ class App extends React.Component {
         done: false,
       },
       tasks: [],
+      id:0,
     };
   }
 
@@ -26,7 +28,6 @@ class App extends React.Component {
       isToggleOn: !prevState.isToggleOn,
     }));
   };
-
   addId = () => {
     const { name, time, desc, done } = this.state.task;
     this.setState({
@@ -38,13 +39,20 @@ class App extends React.Component {
         done,
       },
     });
+  }
+  handleToggleEdit = (e) => {
+    e.preventDefault();
+    this.setState((prevState) => ({
+      isToggleOnEdit: !prevState.isToggleOnEdit,
+      id: e.target.parentNode.parentNode.id,
+    }));
   };
 
   addName = (e) => {
-    const { id, time, desc, done } = this.state.task;
+    const { time, desc, done, id } = this.state.task;
     this.setState({
       task: {
-        id: this.addId,
+        id : this.addId(),
         name: e.target.value,
         time,
         desc,
@@ -65,7 +73,7 @@ class App extends React.Component {
     });
   };
   addDesc = (e) => {
-    const { id, time, name, done } = this.state.task;
+    const { time, name, done, id } = this.state.task;
     this.setState({
       task: {
         id,
@@ -83,6 +91,25 @@ class App extends React.Component {
       isToggleOn: !prevState.isToggleOn,
     }));
   };
+  EditTask = (e) => {
+    e.preventDefault();
+    const {time, desc, name} =  this.state.task
+    const { id , tasks} = this.state ;
+    this.setState({tasks : tasks.filter((task) => {
+      if(task.id === +id){
+        task.name = name;
+        task.time = time ;
+        task.desc =desc;
+        return task
+      }
+      return task
+
+    }) })
+    this.setState((prevState) => ({
+      isToggleOnEdit: !prevState.isToggleOnEdit,
+    }));
+  };
+  
 
   deleteTask = ({ target: { id } }) => {
     this.setState((prev) => ({
@@ -90,11 +117,7 @@ class App extends React.Component {
     }));
   };
 
-  editTask = ({ target: { id } }) => {
-    this.setState((prevState) => ({
-      isToggleOn: !prevState.isToggleOn,
-    }));
-  };
+  
 
   finishTask = ({ target: { id } }) => {
     this.setState({
@@ -110,29 +133,37 @@ class App extends React.Component {
   };
 
   render() {
-    const { isToggleOn, tasks } = this.state;
+    const { isToggleOn, tasks, isToggleOnEdit } = this.state;
     return (
-      <div className='App'>
+      <div className="App">
         <Header handleToggle={this.handleToggle} />
         {isToggleOn ? (
           <Form
             handleToggle={this.handleToggle}
+            addId={this.addId}
             addName={this.addName}
             addTime={this.addTime}
             addDesc={this.addDesc}
-            addId={this.addId}
             handleSubmit={this.handleSubmit}
           />
         ) : (
           ''
         )}
+        {isToggleOnEdit ? (
+          <Form
+            handleToggle={this.handleToggleEdit}
+            addName={this.addName}
+            addTime={this.addTime}
+            addDesc={this.addDesc}
+            handleSubmit={this.EditTask}
+          />
+        ) : (
+          ''
+        )}
+        <Tasks tasks={tasks} handleToggleEdit={this.handleToggleEdit} finishTask={this.finishTask}
+          deleteTask={this.deleteTask} />
 
-        <Tasks
-          tasks={tasks}
-          finishTask={this.finishTask}
-          deleteTask={this.deleteTask}
-          editTask={this.editTask}
-        />
+        
       </div>
     );
   }
