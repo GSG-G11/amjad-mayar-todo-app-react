@@ -3,29 +3,90 @@ import './App.css';
 import Tasks from './components/Tasks';
 import Form from './components/Form';
 import Header from './components/Header';
-import tasks from './tasks';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       isToggleOn: false,
-      tasksData: tasks,
+      task: {
+        id: 0,
+        name: '',
+        time: '',
+        desc: '',
+        done: false,
+      },
+      tasks: [],
     };
-    this.handleToggle = this.handleToggle.bind(this);
   }
 
-  handleToggle(e) {
+  handleToggle = (e) => {
     e.preventDefault();
-
     this.setState((prevState) => ({
       isToggleOn: !prevState.isToggleOn,
     }));
-  }
+  };
+
+  addId = () => {
+    const { name, time, desc, done } = this.state.task;
+    this.setState({
+      task: {
+        id: Math.floor(Math.random() * 1000),
+        name,
+        time,
+        desc,
+        done,
+      },
+    });
+  };
+
+  addName = (e) => {
+    const { id, time, desc, done } = this.state.task;
+    this.setState({
+      task: {
+        id: this.addId,
+        name: e.target.value,
+        time,
+        desc,
+        done,
+      },
+    });
+  };
+  addTime = (e) => {
+    const { id, name, desc, done } = this.state.task;
+    this.setState({
+      task: {
+        id,
+        name,
+        time: e.target.value,
+        desc,
+        done,
+      },
+    });
+  };
+  addDesc = (e) => {
+    const { id, time, name, done } = this.state.task;
+    this.setState({
+      task: {
+        id,
+        name,
+        time,
+        desc: e.target.value,
+        done,
+      },
+    });
+  };
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.state.tasks.push(this.state.task);
+    this.setState((prevState) => ({
+      isToggleOn: !prevState.isToggleOn,
+    }));
+  };
 
   deleteTask = ({ target: { id } }) => {
     this.setState((prev) => ({
-      tasksData: prev.tasksData.filter((task) => task.id !== +id),
+      tasks: prev.tasks.filter((task) => task.id !== +id),
     }));
   };
 
@@ -37,7 +98,7 @@ class App extends React.Component {
 
   finishTask = ({ target: { id } }) => {
     this.setState({
-      tasksData: this.state.tasksData.filter((task) => {
+      tasks: this.state.tasks.filter((task) => {
         if (task.id === +id) {
           task.done = !task.done;
           return task;
@@ -49,14 +110,26 @@ class App extends React.Component {
   };
 
   render() {
-    const { isToggleOn } = this.state;
+    const { isToggleOn, tasks } = this.state;
     return (
       <div className='App'>
         <Header handleToggle={this.handleToggle} />
-        {isToggleOn ? <Form handleToggle={this.handleToggle} /> : ''}
+        {isToggleOn ? (
+          <Form
+            handleToggle={this.handleToggle}
+            addName={this.addName}
+            addTime={this.addTime}
+            addDesc={this.addDesc}
+            addId={this.addId}
+            handleSubmit={this.handleSubmit}
+          />
+        ) : (
+          ''
+        )}
+
         <Tasks
+          tasks={tasks}
           finishTask={this.finishTask}
-          tasks={this.state.tasksData}
           deleteTask={this.deleteTask}
           editTask={this.editTask}
         />
@@ -72,6 +145,6 @@ export default App;
 // done todo Tasks => TaskCard
 // done form (name,time,desc,submitBtn)
 
-// todo completed todos component
+// todo done todos component
 // todo uncompleted todos component
 // todo all todos component
