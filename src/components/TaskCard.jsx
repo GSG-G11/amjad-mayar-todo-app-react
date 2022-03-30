@@ -1,13 +1,28 @@
 import React from 'react';
 import './styles/TaskCard.css';
 
-const TaskCard = ({ name, description, time,color }) => {
-  
+const TaskCard = ({
+  done,
+  name,
+  description,
+  time,
+  color,
+  id,
+  handleFinishTask,
+  handleDeleteTask,
+  handleEditTask,
+}) => {
+  const todoCheckedColor = !done ? 'white' : '#534cef';
+
   return (
     <li className='card' style={{ borderColor: color }}>
       <div className='card-head'>
         <h3 className='task-name'>{name}</h3>
-        <i className='fa-solid fa-check'></i>
+        <i
+          id={id}
+          className='fa-solid fa-check'
+          onClick={handleFinishTask}
+          style={{ backgroundColor: todoCheckedColor }}></i>
       </div>
 
       <div className='task-info'>
@@ -16,8 +31,16 @@ const TaskCard = ({ name, description, time,color }) => {
       </div>
 
       <div className='icons'>
-        <i className='fa-solid fa-pen-to-square' style={{ color }}></i>
-        <i className='fa-solid fa-trash-can' style={{ color }}></i>
+        <i
+          id={id}
+          className='fa-solid fa-pen-to-square'
+          style={{ color }}
+          onClick={handleEditTask}></i>
+        <i
+          id={id}
+          className='fa-solid fa-trash-can'
+          style={{ color }}
+          onClick={handleDeleteTask}></i>
       </div>
     </li>
   );
