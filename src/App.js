@@ -1,20 +1,43 @@
+import React from 'react';
 import './App.css';
-import Tasks from './Components/Tasks';
+import Tasks from './components/Tasks';
+import Form from './components/Form';
+import Header from './components/Header';
 
-function App() {
-  return (
-    <div className='App'>
-      <Tasks />
-    </div>
-  );
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isToggleOn: false,
+    };
+    this.handleToggle = this.handleToggle.bind(this);
+  }
+
+  handleToggle(e) {
+    e.preventDefault();
+
+    this.setState((prevState) => ({
+      isToggleOn: !prevState.isToggleOn,
+    }));
+  }
+  render() {
+    const { isToggleOn } = this.state;
+    return (
+      <div className='App'>
+        <Header handleToggle={this.handleToggle} />
+        {isToggleOn ? <Form handleToggle={this.handleToggle} /> : ''}
+        <Tasks />
+      </div>
+    );
+  }
 }
 
 export default App;
 
-// todo Header => title + button(create todo)
+// done Header => title + button(create todo)
 // done TaskCard (name,time,desc,edit,delete,doneIcon)
 // done todo Tasks => TaskCard
-// todo form (name,time,desc,submitBtn)
+// done form (name,time,desc,submitBtn)
 
 // todo completed todos component
 // todo uncompleted todos component

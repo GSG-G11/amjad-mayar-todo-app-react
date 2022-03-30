@@ -1,13 +1,14 @@
 import React from 'react';
 import TaskCard from './TaskCard';
-import './Tasks.css';
+import './styles/Tasks.css';
+import tasks from '../tasks';
 
 const Tasks = () => {
   return (
     <div className='container'>
       <ul className='grid'>
-        {[1, 1, 1, 1, , 1, 1, 1].map((e, i) => (
-          <TaskCard key={i} />
+        {tasks.map((task) => (
+          <TaskCard {...task}/>
         ))}
       </ul>
     </div>

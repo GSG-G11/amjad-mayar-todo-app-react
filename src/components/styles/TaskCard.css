@@ -43,8 +43,9 @@
 }
 
 .task-info .task-time {
-  color: red;
+  color: rgb(117, 117, 117);
   font-weight: bold;
+  letter-spacing: 1px;
 }
 .icons {
   display: flex;
