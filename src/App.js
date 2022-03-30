@@ -4,78 +4,135 @@ import Tasks from './components/Tasks';
 import Form from './components/Form';
 import Header from './components/Header';
 
-
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       isToggleOn: false,
-      task : {
-        id:Math.floor(Math.random()*1000),
-        name:'',
-        time:'',
-        desc:'',
-        done:false,
+      task: {
+        id: 0,
+        name: '',
+        time: '',
+        desc: '',
+        done: false,
       },
-      tasks : []
+      tasks: [],
     };
-  
   }
 
-  handleToggle = (e)=> {
+  handleToggle = (e) => {
     e.preventDefault();
     this.setState((prevState) => ({
       isToggleOn: !prevState.isToggleOn,
     }));
-  }
-  
-  addName =(e)=>{
-    const {time , desc , done} = this.state.task;
+  };
+
+  addId = () => {
+    const { name, time, desc, done } = this.state.task;
     this.setState({
-      task : {
+      task: {
+        id: Math.floor(Math.random() * 1000),
+        name,
+        time,
+        desc,
+        done,
+      },
+    });
+  };
+
+  addName = (e) => {
+    const { id, time, desc, done } = this.state.task;
+    this.setState({
+      task: {
+        id: this.addId,
         name: e.target.value,
         time,
         desc,
         done,
-      }
-    })
-  }
-  addTime =(e)=>{
-    const {name , desc , done} = this.state.task;
+      },
+    });
+  };
+  addTime = (e) => {
+    const { id, name, desc, done } = this.state.task;
     this.setState({
-      task : {
+      task: {
+        id,
         name,
         time: e.target.value,
         desc,
         done,
-      }
-    })
-  }
-  addDesc =(e)=>{
-    const {time , name , done} = this.state.task;
+      },
+    });
+  };
+  addDesc = (e) => {
+    const { id, time, name, done } = this.state.task;
     this.setState({
-      task : {
+      task: {
+        id,
         name,
         time,
-        desc :e.target.value,
+        desc: e.target.value,
         done,
-      }
-    })
-  }
-  handleSubmit = (e)=>{
+      },
+    });
+  };
+  handleSubmit = (e) => {
     e.preventDefault();
-    this.state.tasks.push(this.state.task)
+    this.state.tasks.push(this.state.task);
     this.setState((prevState) => ({
       isToggleOn: !prevState.isToggleOn,
     }));
-  }
+  };
+
+  deleteTask = ({ target: { id } }) => {
+    this.setState((prev) => ({
+      tasks: prev.tasks.filter((task) => task.id !== +id),
+    }));
+  };
+
+  editTask = ({ target: { id } }) => {
+    this.setState((prevState) => ({
+      isToggleOn: !prevState.isToggleOn,
+    }));
+  };
+
+  finishTask = ({ target: { id } }) => {
+    this.setState({
+      tasks: this.state.tasks.filter((task) => {
+        if (task.id === +id) {
+          task.done = !task.done;
+          return task;
+        }
+
+        return task;
+      }),
+    });
+  };
+
   render() {
-    const { isToggleOn , tasks} = this.state;
+    const { isToggleOn, tasks } = this.state;
     return (
       <div className='App'>
         <Header handleToggle={this.handleToggle} />
-        {isToggleOn ? <Form handleToggle={this.handleToggle} addName={this.addName} addTime={this.addTime} addDesc={this.addDesc} handleSubmit={this.handleSubmit}/> : ''}
-        <Tasks tasks={tasks}/>
+        {isToggleOn ? (
+          <Form
+            handleToggle={this.handleToggle}
+            addName={this.addName}
+            addTime={this.addTime}
+            addDesc={this.addDesc}
+            addId={this.addId}
+            handleSubmit={this.handleSubmit}
+          />
+        ) : (
+          ''
+        )}
+
+        <Tasks
+          tasks={tasks}
+          finishTask={this.finishTask}
+          deleteTask={this.deleteTask}
+          editTask={this.editTask}
+        />
       </div>
     );
   }

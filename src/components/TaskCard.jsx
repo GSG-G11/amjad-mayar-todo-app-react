@@ -1,24 +1,32 @@
 import React from 'react';
 import './styles/TaskCard.css';
-const hexValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F'];
-function randColor() {
-  let hex = '#';
+import randColor from '../utils'
 
-  for (let i = 0; i < 6; i++) {
-    const index = Math.floor(Math.random() * hexValues.length);
-    hex += hexValues[index];
-  }
 
-  return hex;
-}
+const TaskCard = ({
+  done,
+  name,
+  desc,
+  time,
+  id,
+  handleFinishTask,
+  handleDeleteTask,
+  handleEditTask,
+}) => {
 
-const TaskCard = ({ name, desc, time }) => {
+  const taskCheckedColor = !done ? 'white' : '#534cef';
+  
   let color =  randColor() ;
+  
   return (
     <li className='card' style={{ borderColor: color }}>
       <div className='card-head'>
         <h3 className='task-name'>{name}</h3>
-        <i className='fa-solid fa-check'></i>
+        <i
+          id={id}
+          className='fa-solid fa-check'
+          onClick={handleFinishTask}
+          style={{ backgroundColor: taskCheckedColor }}></i>
       </div>
 
       <div className='task-info'>
@@ -27,8 +35,8 @@ const TaskCard = ({ name, desc, time }) => {
       </div>
 
       <div className='icons'>
-        <i className='fa-solid fa-pen-to-square' style={{ color  }}></i>
-        <i className='fa-solid fa-trash-can' style={{ color  }}></i>
+        <i id={id} className='fa-solid fa-pen-to-square' style={{ color }} onClick={handleEditTask}></i>
+        <i id={id} className='fa-solid fa-trash-can' style={{ color }} onClick={handleDeleteTask}></i>
       </div>
     </li>
   );
