@@ -3,7 +3,8 @@ import './App.css';
 import Tasks from './components/Tasks';
 import Form from './components/Form';
 import Header from './components/Header';
-
+import TaskFilters from './components/TasksFilter';
+import randColor from './utils';
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -17,6 +18,8 @@ class App extends React.Component {
         done: false,
       },
       tasks: [],
+      filteredTasks: [],
+      selectedFilter: 'all',
     };
   }
 
@@ -41,7 +44,7 @@ class App extends React.Component {
   };
 
   addName = (e) => {
-    const { id, time, desc, done } = this.state.task;
+    const { time, desc, done } = this.state.task;
     this.setState({
       task: {
         id: this.addId,
@@ -78,9 +81,11 @@ class App extends React.Component {
   };
   handleSubmit = (e) => {
     e.preventDefault();
-    this.state.tasks.push(this.state.task);
+
+    this.state.tasks.push({ ...this.state.task, color: randColor() });
     this.setState((prevState) => ({
       isToggleOn: !prevState.isToggleOn,
+      filteredTasks: prevState.tasks,
     }));
   };
 
@@ -109,11 +114,37 @@ class App extends React.Component {
     });
   };
 
+  filterFinishedTasks = ({ target }) => {
+    this.setState(({ tasks }) => ({
+      filteredTasks: tasks.filter((task) => task.done),
+      selectedFilter: target.id,
+    }));
+  };
+
+  filterTodoTasks = ({ target }) => {
+    this.setState(({ tasks }) => ({
+      filteredTasks: tasks.filter((task) => !task.done),
+      selectedFilter: target.id,
+    }));
+  };
+
+  getAllTasks = ({ target }) => {
+    this.setState(({ tasks }) => ({ filteredTasks: tasks, selectedFilter: target.id }));
+  };
+
   render() {
-    const { isToggleOn, tasks } = this.state;
+    const { isToggleOn, filteredTasks, selectedFilter } = this.state;
     return (
       <div className='App'>
         <Header handleToggle={this.handleToggle} />
+
+        <TaskFilters
+          handleFinishedTasks={this.filterFinishedTasks}
+          handleTodoTasks={this.filterTodoTasks}
+          handleAllTasks={this.getAllTasks}
+          selectedFilter={selectedFilter}
+        />
+
         {isToggleOn ? (
           <Form
             handleToggle={this.handleToggle}
@@ -128,7 +159,7 @@ class App extends React.Component {
         )}
 
         <Tasks
-          tasks={tasks}
+          tasks={filteredTasks}
           finishTask={this.finishTask}
           deleteTask={this.deleteTask}
           editTask={this.editTask}

@@ -7,7 +7,7 @@ const Tasks = ({ finishTask, deleteTask, editTask, tasks }) => {
 
   return (
     <div className='container'>
-      <p className='tasksNum'>{`you have  ${tasks.length} tasks to finish today`}</p>
+      <p className='tasksNum'>{`you have  ${tasks.length} tasks`}</p>
 
       <ul className='grid'>
         {tasks.map((task) => (
