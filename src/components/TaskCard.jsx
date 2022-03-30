@@ -12,7 +12,7 @@ const TaskCard = ({
   handleDeleteTask,
   handleEditTask,
 }) => {
-  const todoCheckedColor = !done ? 'white' : '#534cef';
+  const taskCheckedColor = !done ? 'white' : '#534cef';
 
   return (
     <li className='card' style={{ borderColor: color }}>
@@ -22,7 +22,7 @@ const TaskCard = ({
           id={id}
           className='fa-solid fa-check'
           onClick={handleFinishTask}
-          style={{ backgroundColor: todoCheckedColor }}></i>
+          style={{ backgroundColor: taskCheckedColor }}></i>
       </div>
 
       <div className='task-info'>

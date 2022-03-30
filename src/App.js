@@ -25,7 +25,7 @@ class App extends React.Component {
 
   deleteTask = ({ target: { id } }) => {
     this.setState((prev) => ({
-      tasksData: prev.tasksData.filter((todo) => todo.id !== +id),
+      tasksData: prev.tasksData.filter((task) => task.id !== +id),
     }));
   };
 
@@ -37,13 +37,13 @@ class App extends React.Component {
 
   finishTask = ({ target: { id } }) => {
     this.setState({
-      tasksData: this.state.tasksData.filter((todo) => {
-        if (todo.id === +id) {
-          todo.done = !todo.done;
-          return todo;
+      tasksData: this.state.tasksData.filter((task) => {
+        if (task.id === +id) {
+          task.done = !task.done;
+          return task;
         }
 
-        return todo;
+        return task;
       }),
     });
   };
