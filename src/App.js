@@ -61,7 +61,7 @@ class App extends React.Component {
     });
   };
   addTime = (e) => {
-    const { name, desc, done, id } = this.state.task;
+    const { id, name, desc, done } = this.state.task;
     this.setState({
       task: {
         id,
@@ -109,6 +109,29 @@ class App extends React.Component {
       isToggleOnEdit: !prevState.isToggleOnEdit,
     }));
   };
+  
+
+  deleteTask = ({ target: { id } }) => {
+    this.setState((prev) => ({
+      tasks: prev.tasks.filter((task) => task.id !== +id),
+    }));
+  };
+
+  
+
+  finishTask = ({ target: { id } }) => {
+    this.setState({
+      tasks: this.state.tasks.filter((task) => {
+        if (task.id === +id) {
+          task.done = !task.done;
+          return task;
+        }
+
+        return task;
+      }),
+    });
+  };
+
   render() {
     const { isToggleOn, tasks, isToggleOnEdit } = this.state;
     return (
@@ -137,7 +160,10 @@ class App extends React.Component {
         ) : (
           ''
         )}
-        <Tasks tasks={tasks} handleToggleEdit={this.handleToggleEdit} />
+        <Tasks tasks={tasks} handleToggleEdit={this.handleToggleEdit} finishTask={this.finishTask}
+          deleteTask={this.deleteTask} />
+
+        
       </div>
     );
   }
