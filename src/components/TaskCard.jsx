@@ -12,10 +12,10 @@ function randColor() {
   return hex;
 }
 
-const TaskCard = ({ name, desc, time }) => {
+const TaskCard = ({ name, desc, time , handleToggleEdit , id }) => {
   let color =  randColor() ;
   return (
-    <li className='card' style={{ borderColor: color }}>
+    <li className='card' id={id} style={{ borderColor: color }} >
       <div className='card-head'>
         <h3 className='task-name'>{name}</h3>
         <i className='fa-solid fa-check'></i>
@@ -27,7 +27,7 @@ const TaskCard = ({ name, desc, time }) => {
       </div>
 
       <div className='icons'>
-        <i className='fa-solid fa-pen-to-square' style={{ color  }}></i>
+        <i className='fa-solid fa-pen-to-square' style={{ color  }} onClick={handleToggleEdit}></i>
         <i className='fa-solid fa-trash-can' style={{ color  }}></i>
       </div>
     </li>
