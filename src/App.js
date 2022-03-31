@@ -3,7 +3,9 @@ import './App.css';
 import Tasks from './components/Tasks';
 import Form from './components/Form';
 import Header from './components/Header';
-
+import TaskFilters from './components/TasksFilter';
+import randColor from './utils';
+import swal from 'sweetalert';
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -18,7 +20,9 @@ class App extends React.Component {
         done: false,
       },
       tasks: [],
-      id:0,
+      filteredTasks: [],
+      selectedFilter: 'all',
+      id: 0,
     };
   }
 
@@ -39,7 +43,7 @@ class App extends React.Component {
         done,
       },
     });
-  }
+  };
   handleToggleEdit = (e) => {
     e.preventDefault();
     this.setState((prevState) => ({
@@ -50,9 +54,10 @@ class App extends React.Component {
 
   addName = (e) => {
     const { time, desc, done, id } = this.state.task;
+
     this.setState({
       task: {
-        id : this.addId(),
+        id,
         name: e.target.value,
         time,
         desc,
@@ -86,38 +91,58 @@ class App extends React.Component {
   };
   handleSubmit = (e) => {
     e.preventDefault();
-    this.state.tasks.push(this.state.task);
+
+    const { name, desc, time } = this.state.task;
+
+    if (!name || !desc || !time) {
+      return swal('Error', 'All inputs must be valid', 'error');
+    }
+
+    this.state.tasks.push({
+      ...this.state.task,
+      color: randColor(),
+      id: Math.floor(Math.random() * 1000),
+    });
+
     this.setState((prevState) => ({
       isToggleOn: !prevState.isToggleOn,
+      filteredTasks: prevState.tasks,
+      task: {
+        id: 0,
+        name: '',
+        time: '',
+        desc: '',
+        done: false,
+      },
     }));
   };
   EditTask = (e) => {
     e.preventDefault();
-    const {time, desc, name} =  this.state.task
-    const { id , tasks} = this.state ;
-    this.setState({tasks : tasks.filter((task) => {
-      if(task.id === +id){
-        task.name = name;
-        task.time = time ;
-        task.desc =desc;
-        return task
-      }
-      return task
+    const { time, desc, name } = this.state.task;
+    const { id, tasks } = this.state;
 
-    }) })
+    this.setState({
+      tasks: tasks.filter((task) => {
+        if (task.id === +id) {
+          task.name = name;
+          task.time = time;
+          task.desc = desc;
+          return task;
+        }
+        return task;
+      }),
+    });
     this.setState((prevState) => ({
       isToggleOnEdit: !prevState.isToggleOnEdit,
     }));
   };
-  
 
   deleteTask = ({ target: { id } }) => {
     this.setState((prev) => ({
       tasks: prev.tasks.filter((task) => task.id !== +id),
+      filteredTasks: prev.tasks.filter((task) => task.id !== +id),
     }));
   };
-
-  
 
   finishTask = ({ target: { id } }) => {
     this.setState({
@@ -132,11 +157,37 @@ class App extends React.Component {
     });
   };
 
+  filterFinishedTasks = ({ target }) => {
+    this.setState(({ tasks }) => ({
+      filteredTasks: tasks.filter((task) => task.done),
+      selectedFilter: target.id,
+    }));
+  };
+
+  filterTodoTasks = ({ target }) => {
+    this.setState(({ tasks }) => ({
+      filteredTasks: tasks.filter((task) => !task.done),
+      selectedFilter: target.id,
+    }));
+  };
+
+  getAllTasks = ({ target }) => {
+    this.setState(({ tasks }) => ({ filteredTasks: tasks, selectedFilter: target.id }));
+  };
+
   render() {
-    const { isToggleOn, tasks, isToggleOnEdit } = this.state;
+    const { isToggleOn, isToggleOnEdit, filteredTasks, selectedFilter } = this.state;
     return (
-      <div className="App">
+      <div className='App'>
         <Header handleToggle={this.handleToggle} />
+
+        <TaskFilters
+          handleFinishedTasks={this.filterFinishedTasks}
+          handleTodoTasks={this.filterTodoTasks}
+          handleAllTasks={this.getAllTasks}
+          selectedFilter={selectedFilter}
+        />
+
         {isToggleOn ? (
           <Form
             handleToggle={this.handleToggle}
@@ -160,10 +211,12 @@ class App extends React.Component {
         ) : (
           ''
         )}
-        <Tasks tasks={tasks} handleToggleEdit={this.handleToggleEdit} finishTask={this.finishTask}
-          deleteTask={this.deleteTask} />
-
-        
+        <Tasks
+          tasks={filteredTasks}
+          handleToggleEdit={this.handleToggleEdit}
+          finishTask={this.finishTask}
+          deleteTask={this.deleteTask}
+        />
       </div>
     );
   }

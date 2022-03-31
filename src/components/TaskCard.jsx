@@ -1,7 +1,5 @@
 import React from 'react';
 import './styles/TaskCard.css';
-import randColor from '../utils'
-
 
 const TaskCard = ({
   done,
@@ -11,16 +9,13 @@ const TaskCard = ({
   id,
   handleFinishTask,
   handleDeleteTask,
-  handleToggleEdit
+  handleToggleEdit,
+  color,
 }) => {
-
-
   const taskCheckedColor = !done ? 'white' : '#534cef';
-  
-  let color =  randColor() ;
-  
+
   return (
-    <li className='card' id={id} style={{ borderColor: color }} >
+    <li className='card' id={id} style={{ borderColor: color }}>
       <div className='card-head'>
         <h3 className='task-name'>{name}</h3>
         <i
@@ -36,8 +31,16 @@ const TaskCard = ({
       </div>
 
       <div className='icons'>
-        <i className='fa-solid fa-pen-to-square' style={{ color  }} onClick={handleToggleEdit}></i>
-        <i className='fa-solid fa-trash-can' style={{ color  }}  onClick={handleDeleteTask}></i>
+        <i
+          id={id}
+          className='fa-solid fa-pen-to-square'
+          style={{ color }}
+          onClick={handleToggleEdit}></i>
+        <i
+          id={id}
+          className='fa-solid fa-trash-can'
+          style={{ color }}
+          onClick={handleDeleteTask}></i>
       </div>
     </li>
   );
