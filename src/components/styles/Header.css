@@ -10,6 +10,7 @@ header{
 
 h1 {
     font-size: 35px;
+    animation: animations 2s ease-in ;
 }
 .createTask{
     font-size: 20px;
@@ -20,4 +21,10 @@ h1 {
 
 .createTask:hover{
     transform: scale(1.06);
+}
+
+@keyframes animations {
+    0% {
+        transform: translateY(-20px);
+    }
 }

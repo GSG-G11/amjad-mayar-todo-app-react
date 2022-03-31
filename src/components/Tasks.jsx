@@ -2,7 +2,7 @@ import React from 'react';
 import TaskCard from './TaskCard';
 import './styles/Tasks.css';
 
-const Tasks = ({ finishTask, deleteTask, editTask, tasks }) => {
+const Tasks = ({ finishTask, deleteTask, handleToggleEdit, tasks }) => {
   if (!tasks.length) return <p className='noTasks'>No Tasks To Show</p>;
 
   return (
@@ -16,7 +16,7 @@ const Tasks = ({ finishTask, deleteTask, editTask, tasks }) => {
             {...task}
             handleFinishTask={finishTask}
             handleDeleteTask={deleteTask}
-            handleEditTask={editTask}
+            handleToggleEdit={handleToggleEdit}
           />
         ))}
       </ul>

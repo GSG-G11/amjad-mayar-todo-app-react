@@ -5,11 +5,13 @@ import Form from './components/Form';
 import Header from './components/Header';
 import TaskFilters from './components/TasksFilter';
 import randColor from './utils';
+import swal from 'sweetalert';
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       isToggleOn: false,
+      isToggleOnEdit: false,
       task: {
         id: 0,
         name: '',
@@ -20,6 +22,7 @@ class App extends React.Component {
       tasks: [],
       filteredTasks: [],
       selectedFilter: 'all',
+      id: 0,
     };
   }
 
@@ -29,7 +32,6 @@ class App extends React.Component {
       isToggleOn: !prevState.isToggleOn,
     }));
   };
-
   addId = () => {
     const { name, time, desc, done } = this.state.task;
     this.setState({
@@ -42,12 +44,20 @@ class App extends React.Component {
       },
     });
   };
+  handleToggleEdit = (e) => {
+    e.preventDefault();
+    this.setState((prevState) => ({
+      isToggleOnEdit: !prevState.isToggleOnEdit,
+      id: e.target.parentNode.parentNode.id,
+    }));
+  };
 
   addName = (e) => {
-    const { time, desc, done } = this.state.task;
+    const { time, desc, done, id } = this.state.task;
+
     this.setState({
       task: {
-        id: this.addId,
+        id,
         name: e.target.value,
         time,
         desc,
@@ -68,7 +78,7 @@ class App extends React.Component {
     });
   };
   addDesc = (e) => {
-    const { id, time, name, done } = this.state.task;
+    const { time, name, done, id } = this.state.task;
     this.setState({
       task: {
         id,
@@ -82,22 +92,55 @@ class App extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
 
-    this.state.tasks.push({ ...this.state.task, color: randColor() });
+    const { name, desc, time } = this.state.task;
+
+    if (!name || !desc || !time) {
+      return swal('Error', 'All inputs must be valid', 'error');
+    }
+
+    this.state.tasks.push({
+      ...this.state.task,
+      color: randColor(),
+      id: Math.floor(Math.random() * 1000),
+    });
+
     this.setState((prevState) => ({
       isToggleOn: !prevState.isToggleOn,
       filteredTasks: prevState.tasks,
+      task: {
+        id: 0,
+        name: '',
+        time: '',
+        desc: '',
+        done: false,
+      },
+    }));
+  };
+  EditTask = (e) => {
+    e.preventDefault();
+    const { time, desc, name } = this.state.task;
+    const { id, tasks } = this.state;
+
+    this.setState({
+      tasks: tasks.filter((task) => {
+        if (task.id === +id) {
+          task.name = name;
+          task.time = time;
+          task.desc = desc;
+          return task;
+        }
+        return task;
+      }),
+    });
+    this.setState((prevState) => ({
+      isToggleOnEdit: !prevState.isToggleOnEdit,
     }));
   };
 
   deleteTask = ({ target: { id } }) => {
     this.setState((prev) => ({
       tasks: prev.tasks.filter((task) => task.id !== +id),
-    }));
-  };
-
-  editTask = ({ target: { id } }) => {
-    this.setState((prevState) => ({
-      isToggleOn: !prevState.isToggleOn,
+      filteredTasks: prev.tasks.filter((task) => task.id !== +id),
     }));
   };
 
@@ -133,7 +176,7 @@ class App extends React.Component {
   };
 
   render() {
-    const { isToggleOn, filteredTasks, selectedFilter } = this.state;
+    const { isToggleOn, isToggleOnEdit, filteredTasks, selectedFilter } = this.state;
     return (
       <div className='App'>
         <Header handleToggle={this.handleToggle} />
@@ -148,21 +191,31 @@ class App extends React.Component {
         {isToggleOn ? (
           <Form
             handleToggle={this.handleToggle}
+            addId={this.addId}
             addName={this.addName}
             addTime={this.addTime}
             addDesc={this.addDesc}
-            addId={this.addId}
             handleSubmit={this.handleSubmit}
           />
         ) : (
           ''
         )}
-
+        {isToggleOnEdit ? (
+          <Form
+            handleToggle={this.handleToggleEdit}
+            addName={this.addName}
+            addTime={this.addTime}
+            addDesc={this.addDesc}
+            handleSubmit={this.EditTask}
+          />
+        ) : (
+          ''
+        )}
         <Tasks
           tasks={filteredTasks}
+          handleToggleEdit={this.handleToggleEdit}
           finishTask={this.finishTask}
           deleteTask={this.deleteTask}
-          editTask={this.editTask}
         />
       </div>
     );
